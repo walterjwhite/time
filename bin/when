@@ -1,0 +1,30 @@
+#!/bin/sh
+
+. _LIBRARY_PATH_/_APPLICATION_NAME_/cli.sh
+. _LIBRARY_PATH_/_APPLICATION_NAME_/args.sh
+
+. _LIBRARY_PATH_/_APPLICATION_NAME_/delay.sh
+
+$_FILE
+
+. _LIBRARY_PATH_/_APPLICATION_NAME_/periodic.sh
+
+# -t=*)
+# 		# support hours, minutes, seconds
+# 		_TIME="${_ARG#*=}"
+# 		if [ $(echo $_TIME | $_GNU_GREP -Pc "(h|m|s)$") -eq 1 ]; then
+# 			_DELAY_UNIT=$(echo $_TIME | $_GNU_GREP -Po "(h|m|s)$")
+# 			_DELAY_VALUE=$(echo $_TIME | $_GNU_GREP -Po "[\d]+")
+
+# 			case $_DELAY_UNIT in
+# 			h)
+# 				_DELAY_VALUE=$(($_DELAY_VALUE * 3600))
+# 				;;
+# 			m)
+# 				_DELAY_VALUE=$(($_DELAY_VALUE * 60))
+# 				;;
+# 			esac
+# 		else
+# 			# user specified a precise time
+# 		fi
+# 		;;
