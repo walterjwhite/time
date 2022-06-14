@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. _LIBRARY_PATH_/_APPLICATION_NAME_/install.sh
+
+if [ $# -eq 0 ]; then
+	# attempt to locate files
+	for _TIME_INSTALL_FILE in $(find .time -type f); do
+		_time_install "$_TIME_INSTALL_FILE"
+	done
+else
+	_time_install "$1"
+fi

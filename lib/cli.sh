@@ -1,5 +1,8 @@
 #!/bin/sh
 
+. _LIBRARY_PATH_/console/file.sh
+. _LIBRARY_PATH_/_APPLICATION_NAME_/install.sh
+
 for _ARG in "$@"; do
 	case $_ARG in
 	-t=*)
