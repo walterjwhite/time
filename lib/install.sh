@@ -2,7 +2,7 @@
 
 . _LIBRARY_PATH_/console/file.sh
 
-if [ $USER = "root" ]; then
+if [ -n "$USER" ] && [ "$USER" = "root" ]; then
 	_exitWithError "Not installing jobs as root" 1
 fi
 
@@ -20,7 +20,16 @@ _time_install() {
 	# kill any running processes with that particular job
 	if [ -e $_target_job_filename ]; then
 		_warn "Killing any existing processes for $_target_job_filename"
-		killall $_source_filename
+
+		# not provided with cygwin / GNU coreutils
+		#killall $_source_filename
+		local _running_processes=$(ps | grep $_source_filename | grep -v grep | awk {'print$1'})
+		if [ -n "$_running_processes" ]; then
+			_warn " found $_running_processes, killing"
+			kill $_running_processes
+		else
+			_warn " no running processes found for $_source_filename"
+		fi
 	fi
 
 	cp $1 $_target_job_filename
