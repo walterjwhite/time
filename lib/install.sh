@@ -3,7 +3,7 @@
 . _LIBRARY_PATH_/console/file.sh
 
 if [ -n "$USER" ] && [ "$USER" = "root" ]; then
-	_exitWithError "Not installing jobs as root" 1
+	_exit_with_error "Not installing jobs as root" 1
 fi
 
 _time_install() {

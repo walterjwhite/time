@@ -6,7 +6,7 @@ if [ -n "$_EVERY" ]; then
 
 		_SLEEP_STATUS=$?
 		if [ $_SLEEP_STATUS -gt 0 ]; then
-			_exitWithError "Interrupted" $_SLEEP_STATUS
+			_exit_with_error "Interrupted" $_SLEEP_STATUS
 		fi
 
 		$_FILE

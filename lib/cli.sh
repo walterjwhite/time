@@ -21,7 +21,7 @@ for _ARG in "$@"; do
 		_FILE="${_ARG#*=}"
 
 		if [ ! -e $_FILE ]; then
-			_exitWithError "$_FILE does not exist"
+			_exit_with_error "$_FILE does not exist"
 		fi
 		;;
 	-l=*)
