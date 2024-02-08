@@ -1,0 +1,87 @@
+#!/bin/sh
+
+import git:install/file.sh
+
+[ "$_TIME_FILE" ] && {
+	_require_file "$_TIME_FILE"
+	[ -x "$_TIME_FILE" ] || {
+		chmod +x "$_TIME_FILE"
+		_warn "automatically made $_TIME_FILE executable"
+	}
+}
+[ "$_TIME_EXECUTE" ] && _TIME_FILE="$_TIME_EXECUTE"
+
+_REQUIRE_DETAILED_MESSAGE="Either run file (-file=*) or cmd to execute (-execute=*) are required" _require "$_TIME_FILE" "_TIME_FILE"
+
+[ "$_TIME_TIME" ] && {
+	_FUTURE_DATE_TIME=$_TIME_TIME
+	_FORMAT=$_CONF_TIME_FORMAT
+}
+[ "$_TIME_SECONDS" ] && {
+	_FUTURE_DATE_TIME=$_TIME_SECONDS
+	_FORMAT=$_CONF_TIME_SECONDS_FORMAT
+}
+[ "$_TIME_DATETIME" ] && {
+	_FUTURE_DATE_TIME=$_TIME_DATETIME
+	_FORMAT=$_CONF_TIME_DATETIME_FORMAT
+}
+
+_until_is_done() {
+	$_TIME_ON_SUCCESS
+}
+
+if [ -n "$_TIME_ON_SUCCESS" ] && [ -n "$_TIME_EVAL_EVERY" ]; then
+	while [ $_CONF_WAIT_ITERATIONS -gt 0 ]; do
+		_until_is_done
+
+		_EVAL_STATUS=$?
+		case $_EVAL_STATUS in
+		0)
+			_debug "$_TIME_ON_SUCCESS completed successfully"
+			break
+			;;
+		$_WHEN_EXIT_STATUS)
+			_info "$_TIME_ON_SUCCESS -> $_EVAL_STATUS, waiting ${_TIME_EVAL_EVERY}s"
+			sleep $_TIME_EVAL_EVERY
+			;;
+		*)
+			_error "Error from until cmd - $_EVAL_STATUS" $_EVAL_STATUS
+			;;
+		esac
+	done
+else
+	_require "$_FUTURE_DATE_TIME" "_FUTURE_DATE_TIME -dt"
+	_require "$_FORMAT" _FORMAT
+
+	_CURRENT_EPOCH=$(date +%s)
+	_TARGET_EPOCH=$(date $_CONF_DATE_OPTIONS "$_FORMAT" "$_FUTURE_DATE_TIME" +%s)
+	_DELAY=$(($_TARGET_EPOCH - $_CURRENT_EPOCH))
+fi
+
+if [ -n "$_DELAY" ]; then
+	if [ $_DELAY -lt 0 ]; then
+		_warn "$_DELAY is < 0 (in the past)." 1
+	else
+		_info "Sleeping $_DELAY"
+		sleep $_DELAY
+	fi
+fi
+
+unset _CONF_INSTALL_APPLICATION_DATA_PATH _CONF_INSTALL_APPLICATION_CONFIG_PATH
+
+$_TIME_FILE
+
+if [ -n "$_TIME_EVERY" ]; then
+	while [ $_RUNNING -eq 1 ]; do
+		sleep $_TIME_EVERY
+
+		_SLEEP_STATUS=$?
+		if [ $_SLEEP_STATUS -gt 0 ]; then
+			_error "Interrupted" $_SLEEP_STATUS
+		fi
+
+		$_TIME_FILE
+	done
+fi
+
+
